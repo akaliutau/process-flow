@@ -30,16 +30,7 @@ class InMemoryStateHolder(StateHolder):
         found.sort(key=lambda k: k['timestamp'])
         final_state = found[-1]['state'] if found else dict()
         self.update_state(task_id, final_state)
-
-    def pull_value(self, namespace: str, key: str) -> any:
-        if namespace not in self.instance_state:
-            self.pull_state(task_id=namespace)
-        return self.instance_state[namespace].get(key)
-
-    def update_state(self, task_id, state):
-        if task_id not in self.instance_state:
-            self.instance_state[task_id] = dict()
-        self.instance_state[task_id].update(state)
+        self.update_state(task_id, {'synced': True})
 
     #        log.info('current state of %s is %s', task_id, self.instance_state[task_id])
 
@@ -49,10 +40,13 @@ class InMemoryStateHolder(StateHolder):
         task_id = task['task_id']
         timestamp = task['timestamp']
         status = task['status']
-        counter = self.instance_state[task_id].get('counter')
+        counter = self.pull_value(task_id, 'counter')
         key = f'{seq_id}-{run_id}-{task_id}-{timestamp}-{status}-{counter}'
-        task['state'] = dict(self.instance_state[task_id])  # deep copy is needed
+        cur_state = dict(self.instance_state[task_id])  # deep copy is needed
+        cur_state.update({'synced': True})
+        task['state'] = cur_state
         self._records[key] = task
+        self.instance_state[task_id].update({'synced': True}) # TODO limit direct access to instance_state
 
     def pull_tasks(self) -> List[any]:
         print(self._records)

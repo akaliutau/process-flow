@@ -8,6 +8,8 @@ from typing import Callable
 import colorlog
 from google.cloud import bigquery
 
+from engine.exceptions import ExecutionException
+
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s %(asctime)s [%(filename)s] %(levelname)s %(message)s',
@@ -58,7 +60,7 @@ def retry_factory(timeout: int, min_pull_interval: int, max_pull_interval: int, 
                     pull_interval = next_pull_interval if next_pull_interval < max_pull_interval else max_pull_interval
                 except Exception as e:
                     print(e)
-                    raise Exception('exception thrown during waiting')
+                    raise ExecutionException('exception thrown during waiting')
 
         return func_with_timeout
 
