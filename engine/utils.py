@@ -31,6 +31,7 @@ def set_verbose_mode():
     for module in info_modules:
         colorlog.getLogger(module).setLevel(logging.INFO)
 
+
 class BigQuery:
 
     def __int__(self, project: str):
@@ -43,7 +44,10 @@ def raise_timeout(signum, frame):
     raise TimeoutError
 
 
-def retry_factory(timeout: int, min_pull_interval: int, max_pull_interval: int, pull_interval_coeff: float) -> Callable:
+def retry_factory(timeout: int,
+                  min_pull_interval: int,
+                  max_pull_interval: int,
+                  pull_interval_coeff: float) -> Callable:
     def decorator(func) -> Callable:
         def func_with_timeout(*args, **kwargs):
             signal.signal(signal.SIGALRM, raise_timeout)
