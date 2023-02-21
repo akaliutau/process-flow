@@ -1,10 +1,8 @@
-import traceback
 import uuid
 from typing import List
 
 from jinja2 import Environment
 
-from engine.constants import TaskResult, TaskStatus
 from engine.dcontext import DContext
 from engine.execution_service import ExecutionService
 from engine.graph import Graph
@@ -31,45 +29,32 @@ class DAG:
         task.context = self._context
         return task
 
-    def _exec_task(self, task: Operator) -> None:
-        try:
-            task = self._get_task(task)
-            task.set_status(TaskStatus.RUNNING)
-            task.exec()
-            task.result = TaskResult.SUCCESS
-        except Exception as e:
-            print(traceback.format_exc())
-            self.result = TaskResult.ERROR
-            self.error_msg = str(e)
-            log.error(e)
-        finally:
-            task.set_status(TaskStatus.FINISHED)
-
-    def _exec_graph(self):
-        pass
-
     def get_dag_tasks(self) -> List[Operator]:
         tasks = list()
         for inst in keeper.get_instances(Operator.__name__):
-            log.info(inst)
-            tasks.append(inst)
+            log.debug(inst)
+            tasks.append(self._get_task(inst))
+        log.info('collected %s task(s)', len(tasks))
+             
         return tasks
 
-    def compile(self):
+    def _compile(self):
         g = Graph(self.get_dag_tasks())
         g.prepare()
         self._execution_graph = g
 
     def run(self):
-        log.info('running dag class')
+        log.info('building graph...')
+        self._compile()
+        log.info('running dag...')
         with ExecutionService() as es:
             es.execute_dag(self._execution_graph)
 
     def __enter__(self):
-        print('created dag class')
+        log.debug('created dag class')
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print('finalising dag class')
+        log.debug('finalising dag class')
         # for file in self.files:
         #    os.unlink(file)

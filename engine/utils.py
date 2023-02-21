@@ -14,6 +14,7 @@ handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s %(asctime)s [%(filename)s] %(levelname)s %(message)s',
     log_colors={
+        'INFO': 'black',
         'DEBUG': 'cyan',
         'WARNING': 'yellow',
         'ERROR': 'red'
@@ -22,7 +23,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 log = colorlog.getLogger()
 log.addHandler(handler)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 
 def set_verbose_mode():

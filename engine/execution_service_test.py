@@ -32,6 +32,7 @@ class TestingExecutionService(unittest.TestCase):
         op_09 >> op_11
 
         g = Graph([op_09, op_10,op_11])
+        g.prepare()
 
         with ExecutionService() as es:
             es.execute_dag(g)

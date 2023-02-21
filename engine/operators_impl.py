@@ -9,7 +9,7 @@ class PythonOperator(Operator):
         super().__init__(task_id)
         self._python_callable = python_callable
 
-    def exec(self):
+    async def exec(self):
         self._python_callable(self.store, self.context)
 
 
@@ -24,5 +24,5 @@ class BigQueryInsertJobOperator(Operator):
         self.project_id = project_id
         self.configuration = configuration
 
-    def exec(self):
+    async def exec(self):
         pass

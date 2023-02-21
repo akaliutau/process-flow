@@ -8,5 +8,3 @@ google-cloud-monitoring==2.10.0
 google_cloud_bigquery==2.34.3
 google-api-python-client==2.52.0
 asyncio==3.4.3
-
-docker==5.0.3

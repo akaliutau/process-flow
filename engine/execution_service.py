@@ -5,9 +5,9 @@ from contextlib import suppress
 from typing import Dict, Deque, Set
 
 from engine.constants import TaskStatus, TaskResult
+from engine.graph import Graph
 from engine.utils import log
-from graph import Graph
-from operators import Operator
+from engine.operators import Operator
 
 
 class ExecutionService:
@@ -42,7 +42,10 @@ class ExecutionService:
             self.error_msg = str(e)
             log.error(e)
         finally:
-            operator.set_status(TaskStatus.FINISHED)
+            try:
+                operator.set_status(TaskStatus.FINISHED)
+            except Exception as e:
+                log.error(e)
 
         log.info('processed {}'.format(operator.task_id))
 
@@ -71,7 +74,6 @@ class ExecutionService:
         await self.queue.join()  # wait for all tasks to be processed
 
     def execute_dag(self, graph: Graph[Operator]) -> None:
-        graph.prepare()
         self.loop.run_until_complete(self.async_execute_dag(graph))
 
     def __enter__(self):
@@ -88,10 +90,10 @@ class ExecutionService:
             for t in pending:
                 with suppress(asyncio.CancelledError):
                     t.cancel()
-                    log.debug('waiting for task %s' % t)
+                    #log.debug('waiting for task %s' % t)
                     self.loop.run_until_complete(t)
-            log.info('stopping loop')
+            log.info('stopping loop...')
             self.loop.stop()
         except Exception as e:
             log.error(e)
-        log.debug("Shutdown complete ...")
+        log.debug("Shutdown complete")

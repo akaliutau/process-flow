@@ -4,10 +4,10 @@ from typing import Dict
 
 from jinja2 import Environment
 
-from keeper import keeper
-from dcontext import DContext
+from engine.keeper import keeper
+from engine.dcontext import DContext
 from engine.constants import TaskStatus, TaskResult
-from graph import DNode
+from engine.graph import DNode
 from redux.store import Store
 
 
@@ -59,6 +59,7 @@ class Operator(DNode, ABC):
 
     def get_operation_state(self) -> Dict[str, any]:
         return {
+            'type': 'operation_status_update',
             'run_id': self._context.get('run_id'),
             'task_id': self._task_id,
             'timestamp': self.timestamp,
@@ -77,7 +78,7 @@ class Operator(DNode, ABC):
             self.store.dispatch(self.get_operation_state())
 
     @abstractmethod
-    async def exec(self):
+    async def exec(self) -> None:
         """ This async method is responsible for:
           1. Updating state for underlying Task (inserting starting and finishing timestamps, updating status, etc)
           2. Handling exceptions occurred during execution
