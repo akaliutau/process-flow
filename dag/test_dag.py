@@ -16,14 +16,14 @@ def operation_state_reducer(state: Dict, action: Dict) -> Dict:
     return state
 
 
-def func_1(store: Store, context: DContext, **kwargs):
+def dummy_function(store: Store, context: DContext, **kwargs):
     log.info('inside func_1, context=%s', context)
 
 
 with DAG(store=create_store(reducer=operation_state_reducer)) as dag:
-    op1 = PythonOperator(task_id='task_1', python_callable=func_1)
-    op2 = BigQueryInsertJobOperator(task_id='task_2', project_id='test_prj', configuration={})
+    task1 = PythonOperator(task_id='task_1', python_callable=dummy_function, allow_to_fail=True)
+    task2 = BigQueryInsertJobOperator(task_id='task_2', project_id='process-flow-demo-project', configuration={})
 
-    op1 >> op2
+    task1 >> task2
 
     dag.run()

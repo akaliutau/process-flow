@@ -13,7 +13,10 @@ from redux.store import Store
 
 class Operator(DNode, ABC):
 
-    def __init__(self, task_id: str, environment: Environment = None, store: Store = None, context: DContext = None):
+    def __init__(self, task_id: str,
+                 environment: Environment = None,
+                 store: Store = None,
+                 context: DContext = None):
         super().__init__(task_id)
         self.timestamp = None
         self.status = TaskStatus.PENDING
