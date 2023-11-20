@@ -8,10 +8,13 @@ from typing import Callable
 import colorlog
 from google.cloud import bigquery
 
+from engine.exceptions import ExecutionException
+
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s %(asctime)s [%(filename)s] %(levelname)s %(message)s',
     log_colors={
+        'INFO': 'black',
         'DEBUG': 'cyan',
         'WARNING': 'yellow',
         'ERROR': 'red'
@@ -20,7 +23,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 log = colorlog.getLogger()
 log.addHandler(handler)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 
 def set_verbose_mode():
@@ -28,6 +31,7 @@ def set_verbose_mode():
     info_modules = ['grpc', 'google']
     for module in info_modules:
         colorlog.getLogger(module).setLevel(logging.INFO)
+
 
 class BigQuery:
 
@@ -41,7 +45,10 @@ def raise_timeout(signum, frame):
     raise TimeoutError
 
 
-def retry_factory(timeout: int, min_pull_interval: int, max_pull_interval: int, pull_interval_coeff: float) -> Callable:
+def retry_factory(timeout: int,
+                  min_pull_interval: int,
+                  max_pull_interval: int,
+                  pull_interval_coeff: float) -> Callable:
     def decorator(func) -> Callable:
         def func_with_timeout(*args, **kwargs):
             signal.signal(signal.SIGALRM, raise_timeout)
@@ -58,7 +65,7 @@ def retry_factory(timeout: int, min_pull_interval: int, max_pull_interval: int, 
                     pull_interval = next_pull_interval if next_pull_interval < max_pull_interval else max_pull_interval
                 except Exception as e:
                     print(e)
-                    raise Exception('exception thrown during waiting')
+                    raise ExecutionException('exception thrown during waiting')
 
         return func_with_timeout
 
