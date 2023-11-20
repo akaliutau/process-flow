@@ -23,7 +23,7 @@ Tasks are generic and should implement `Operator` abstract class. For demonstrat
 # Installation
 
 ```shell
-python -m venv env
+python3 -m venv env
 source ./env/bin/activate
 pip install -r requirements.txt
 ```
