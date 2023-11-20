@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 
 from engine.dag import DAG
@@ -17,7 +18,7 @@ def operation_state_reducer(state: Dict, action: Dict) -> Dict:
 
 
 def dummy_function(store: Store, context: DContext, **kwargs):
-    log.info('inside func_1, context=%s', context)
+    log.info('inside func_1, context=%s', json.dumps(context))
 
 
 with DAG(store=create_store(reducer=operation_state_reducer)) as dag:
