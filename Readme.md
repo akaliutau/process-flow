@@ -22,6 +22,7 @@ Tasks are generic and should implement `Operator` abstract class. For demonstrat
 
 # Installation
 
+Note: the latest version was tested on Python 3.12; lower versions may require some changes in package versions in dependencies
 ```shell
 python3 -m venv env
 source ./env/bin/activate
