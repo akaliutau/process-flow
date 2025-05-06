@@ -14,7 +14,7 @@ handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s %(asctime)s [%(filename)s] %(levelname)s %(message)s',
     log_colors={
-        'INFO': 'black',
+        'INFO': 'green',
         'DEBUG': 'cyan',
         'WARNING': 'yellow',
         'ERROR': 'red'

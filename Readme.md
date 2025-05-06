@@ -1,6 +1,6 @@
 # About
 
-This is ProcessFlow - an AirFlow-like framework to execute directed acyclic graphs (DAGs) consisting from tasks of generic nature.
+This is ProcessFlow - a tiny AirFlow-like framework to execute directed acyclic graphs (DAGs) consisting from tasks of generic nature.
 
 Advantages:
 
